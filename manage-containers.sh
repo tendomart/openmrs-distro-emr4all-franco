@@ -374,11 +374,12 @@ show_menu() {
     echo "4) Prune Docker system (clean up unused resources)"
     echo "5) Clean up dangling images and containers"
     echo "6) Update frontend without rebuild (copy static assets)"
-    echo "7) Show container logs"
-    echo "8) Access container shell"
-    echo "9) Show container status"
-    echo "10) Fastfetch (quick system overview)"
-    echo "11) Exit"
+    echo "7) Verify config and logo in container"
+    echo "8) Show container logs"
+    echo "9) Access container shell"
+    echo "10) Show container status"
+    echo "11) Fastfetch (quick system overview)"
+    echo "12) Exit"
     echo ""
 }
 
@@ -390,7 +391,7 @@ main() {
     
     while true; do
         show_menu
-        read -p "Enter your choice (1-11): " choice
+        read -p "Enter your choice (1-12): " choice
         echo ""
         
         case $choice in
@@ -413,23 +414,26 @@ main() {
                 update_frontend
                 ;;
             7)
-                show_logs
+                verify_config
                 ;;
             8)
-                access_shell
+                show_logs
                 ;;
             9)
-                show_status
+                access_shell
                 ;;
             10)
-                fastfetch
+                show_status
                 ;;
             11)
+                fastfetch
+                ;;
+            12)
                 print_status "Goodbye!"
                 exit 0
                 ;;
             *)
-                print_error "Invalid choice. Please select a number between 1 and 11."
+                print_error "Invalid choice. Please select a number between 1 and 12."
                 ;;
         esac
         
