@@ -46,6 +46,60 @@ show_status() {
     echo ""
 }
 
+# Function for fastfetch - quick system and container overview
+fastfetch() {
+    print_header "Fast System Overview"
+    
+    echo -e "${BLUE}System Information:${NC}"
+    echo "├── Host: $(hostname)"
+    echo "├── OS: $(uname -s) $(uname -r)"
+    echo "├── Uptime: $(uptime -p 2>/dev/null || uptime)"
+    echo "├── Disk Usage: $(df -h / | tail -1 | awk '{print $5}') ($(df -h / | tail -1 | awk '{print $4}' | sed 's/G/GB/;s/M/MB/;s/K/KB/') free)"
+    echo "├── Memory Usage: $(free -h | awk 'NR==2{printf "%.1f%% (%s/%s)", $3*100/$2, $3, $2}')"
+    echo "└── Docker Version: $(docker --version 2>/dev/null | cut -d' ' -f3 | sed 's/,//')"
+    echo ""
+    
+    echo -e "${BLUE}Container Status:${NC}"
+    if docker-compose ps --services --quiet | xargs docker-compose ps 2>/dev/null | grep -q "Up"; then
+        docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}" | while IFS= read -r line; do
+            if [[ $line == *"Up"* ]]; then
+                echo "├── $line"
+            else
+                echo "├── $line"
+            fi
+        done
+    else
+        echo "└── No containers running"
+    fi
+    echo ""
+    
+    echo -e "${BLUE}Resource Usage:${NC}"
+    if command -v docker stats --no-stream &> /dev/null; then
+        docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}" 2>/dev/null | while IFS= read -r line; do
+            if [[ $line == *"CONTAINER"* ]]; then
+                echo "├── $line"
+            else
+                echo "└── $line"
+            fi
+        done
+    else
+        echo "└── Docker stats not available"
+    fi
+    echo ""
+    
+    echo -e "${BLUE}Network Ports:${NC}"
+    echo "├── Gateway: http://localhost:80"
+    echo "├── Frontend: http://localhost:80/openmrs/spa"
+    echo "└── Backend API: http://localhost:80/openmrs"
+    echo ""
+    
+    echo -e "${BLUE}Quick Actions:${NC}"
+    echo "├── Config file: frontend/config-core_demo.json"
+    echo "├── Docker Compose: docker-compose.yml"
+    echo "└── Logs: docker-compose logs -f"
+    echo ""
+}
+
 # Function to build and start containers
 build_and_start() {
     print_header "Building and Starting Containers"
@@ -219,7 +273,8 @@ show_menu() {
     echo "6) Show container logs"
     echo "7) Access container shell"
     echo "8) Show container status"
-    echo "9) Exit"
+    echo "9) Fastfetch (quick system overview)"
+    echo "10) Exit"
     echo ""
 }
 
@@ -229,7 +284,7 @@ main() {
     
     while true; do
         show_menu
-        read -p "Enter your choice (1-9): " choice
+        read -p "Enter your choice (1-10): " choice
         echo ""
         
         case $choice in
@@ -258,11 +313,14 @@ main() {
                 show_status
                 ;;
             9)
+                fastfetch
+                ;;
+            10)
                 print_status "Goodbye!"
                 exit 0
                 ;;
             *)
-                print_error "Invalid choice. Please select a number between 1 and 9."
+                print_error "Invalid choice. Please select a number between 1 and 10."
                 ;;
         esac
         
