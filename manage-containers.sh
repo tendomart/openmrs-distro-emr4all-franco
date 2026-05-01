@@ -209,6 +209,57 @@ cleanup_dangling() {
     print_status "Cleanup completed!"
 }
 
+# Function to verify config and logo in container
+verify_config() {
+    print_header "Verifying Configuration in Container"
+    
+    # Check if frontend container is running
+    if ! $DOCKER_COMPOSE_CMD ps frontend | grep -q "Up"; then
+        print_error "Frontend container is not running. Please start the containers first."
+        return 1
+    fi
+    
+    FRONTEND_ID=$($DOCKER_COMPOSE_CMD ps -q frontend)
+    
+    print_status "Checking config file in container..."
+    if docker exec $FRONTEND_ID test -f /usr/share/nginx/html/config-core_demo.json; then
+        print_status "✓ Config file exists in container"
+        
+        # Check if colors are present in config
+        if docker exec $FRONTEND_ID grep -q "#87CEEB" /usr/share/nginx/html/config-core_demo.json; then
+            print_status "✓ Brand color #1 (#87CEEB) found in config"
+        else
+            print_warning "✗ Brand color #1 not found in config"
+        fi
+        
+        if docker exec $FRONTEND_ID grep -q "#012c3d" /usr/share/nginx/html/config-core_demo.json; then
+            print_status "✓ Brand color #2 (#012c3d) found in config"
+        else
+            print_warning "✗ Brand color #2 not found in config"
+        fi
+        
+        if docker exec $FRONTEND_ID grep -q "MaliEMR" /usr/share/nginx/html/config-core_demo.json; then
+            print_status "✓ Implementation name (MaliEMR) found in config"
+        else
+            print_warning "✗ Implementation name not found in config"
+        fi
+    else
+        print_error "✗ Config file not found in container"
+    fi
+    
+    print_status "Checking logo file in container..."
+    if docker exec $FRONTEND_ID test -f /usr/share/nginx/html/logo.png; then
+        print_status "✓ Logo file exists in container"
+        LOGO_SIZE=$(docker exec $FRONTEND_ID stat -c%s /usr/share/nginx/html/logo.png)
+        print_status "  Logo size: $LOGO_SIZE bytes"
+    else
+        print_error "✗ Logo file not found in container"
+    fi
+    
+    echo ""
+    print_status "To apply changes, use option 6) Update frontend without rebuild"
+}
+
 # Function to update frontend without rebuild
 update_frontend() {
     print_header "Updating Frontend (No Rebuild)"
@@ -236,6 +287,7 @@ update_frontend() {
     
     print_status "Frontend updated successfully!"
     print_status "Changes should be reflected immediately in your browser."
+    print_status "Clear browser cache (Ctrl+F5) if changes are not visible."
 }
 
 # Function to show logs
