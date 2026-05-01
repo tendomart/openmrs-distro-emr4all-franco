@@ -15,7 +15,9 @@
       }
     }
   },
-  "gender": [
+  "@openmrs/esm-patient-registration-app": {
+    "fieldConfigurations": {
+      "gender": [
         {
           "value": "male",
           "label": "Male"
@@ -24,29 +26,24 @@
           "value": "female",
           "label": "Female"
         }
-      ],
-      "phone": {
-        "validation": {
-          "required": false
-        }
-      }
+      ]
+    }
+  }
   ,
   "@openmrs/esm-styleguide": {
-    "Brand color #1": "#005d5d",
-    "Brand color #2": "#611502",
-    "Brand color #3": "#f23c0f",
+    "Brand color #1": "#14B53A",
     "implementationName": "MaliEMR"
   },
   "@openmrs/esm-login-app": {
     "logo": {
-      "src": "/openmrs/spa/maliemr-logo.png",
+      "src": "/openmrs/spa/logo.png",
       "alt": "MaliEMR"
     }
   },
   "footer": {
       "additionalLogos": [
         {
-          "src": "/openmrs/spa/maliemr-logo.png",
+          "src": "/openmrs/spa/logo.png",
           "alt": "MaliEMR",
           "link": "https://maliemr.org" 
         } 
