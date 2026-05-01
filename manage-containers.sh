@@ -1,0 +1,275 @@
+#!/bin/bash
+
+# Container Management Script for OpenMRS EMR4ALL
+# This script provides a menu-driven interface for managing Docker containers
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+print_header() {
+    echo -e "${BLUE}================================${NC}"
+    echo -e "${BLUE}$1${NC}"
+    echo -e "${BLUE}================================${NC}"
+}
+
+# Function to check if Docker is running
+check_docker() {
+    if ! docker info > /dev/null 2>&1; then
+        print_error "Docker is not running. Please start Docker first."
+        exit 1
+    fi
+}
+
+# Function to show container status
+show_status() {
+    print_header "Container Status"
+    docker-compose ps
+    echo ""
+}
+
+# Function to build and start containers
+build_and_start() {
+    print_header "Building and Starting Containers"
+    print_status "Building all containers..."
+    docker-compose build --no-cache
+    print_status "Starting all containers..."
+    docker-compose up -d
+    print_status "Containers are now running!"
+    show_status
+}
+
+# Function to rebuild containers
+rebuild_containers() {
+    print_header "Rebuilding Containers"
+    print_warning "This will rebuild all containers from scratch..."
+    read -p "Are you sure? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        print_status "Stopping containers..."
+        docker-compose down
+        print_status "Removing containers and images..."
+        docker-compose down --rmi all
+        print_status "Rebuilding containers..."
+        docker-compose build --no-cache
+        print_status "Starting containers..."
+        docker-compose up -d
+        print_status "Containers rebuilt and started!"
+        show_status
+    else
+        print_status "Rebuild cancelled."
+    fi
+}
+
+# Function to stop and remove containers
+delete_containers() {
+    print_header "Deleting Containers"
+    print_warning "This will stop and remove all containers..."
+    read -p "Are you sure? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        print_status "Stopping and removing containers..."
+        docker-compose down --volumes --remove-orphans
+        print_status "Containers deleted!"
+        show_status
+    else
+        print_status "Delete cancelled."
+    fi
+}
+
+# Function to prune Docker system
+prune_docker() {
+    print_header "Pruning Docker System"
+    print_warning "This will remove all unused Docker resources (images, containers, volumes, networks)..."
+    read -p "Are you sure? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        print_status "Pruning Docker system..."
+        docker system prune -a --volumes -f
+        print_status "Docker system pruned!"
+    else
+        print_status "Prune cancelled."
+    fi
+}
+
+# Function to update frontend without rebuild
+update_frontend() {
+    print_header "Updating Frontend (No Rebuild)"
+    print_status "Updating frontend configuration and static assets..."
+    
+    # Check if frontend container is running
+    if ! docker-compose ps frontend | grep -q "Up"; then
+        print_error "Frontend container is not running. Please start the containers first."
+        return 1
+    fi
+    
+    # Copy updated config file
+    print_status "Copying updated config file..."
+    docker cp frontend/config-core_demo.json $(docker-compose ps -q frontend):/usr/share/nginx/html/
+    
+    # Restart nginx in the frontend container to reload config
+    print_status "Reloading nginx configuration..."
+    docker-compose exec frontend nginx -s reload
+    
+    print_status "Frontend updated successfully!"
+    print_status "Changes should be reflected immediately in your browser."
+}
+
+# Function to show logs
+show_logs() {
+    print_header "Showing Container Logs"
+    echo "Select which service logs to view:"
+    echo "1) All services"
+    echo "2) Frontend"
+    echo "3) Backend"
+    echo "4) Gateway"
+    echo "5) Database"
+    echo "6) Return to main menu"
+    read -p "Enter your choice (1-6): " log_choice
+    
+    case $log_choice in
+        1)
+            docker-compose logs -f --tail=50
+            ;;
+        2)
+            docker-compose logs -f --tail=50 frontend
+            ;;
+        3)
+            docker-compose logs -f --tail=50 backend
+            ;;
+        4)
+            docker-compose logs -f --tail=50 gateway
+            ;;
+        5)
+            docker-compose logs -f --tail=50 db
+            ;;
+        6)
+            return
+            ;;
+        *)
+            print_error "Invalid choice. Returning to main menu."
+            ;;
+    esac
+}
+
+# Function to access container shell
+access_shell() {
+    print_header "Access Container Shell"
+    echo "Select which container to access:"
+    echo "1) Frontend"
+    echo "2) Backend"
+    echo "3) Gateway"
+    echo "4) Database"
+    echo "5) Return to main menu"
+    read -p "Enter your choice (1-5): " shell_choice
+    
+    case $shell_choice in
+        1)
+            docker-compose exec frontend /bin/sh
+            ;;
+        2)
+            docker-compose exec backend /bin/bash
+            ;;
+        3)
+            docker-compose exec gateway /bin/sh
+            ;;
+        4)
+            docker-compose exec db /bin/bash
+            ;;
+        5)
+            return
+            ;;
+        *)
+            print_error "Invalid choice. Returning to main menu."
+            ;;
+    esac
+}
+
+# Main menu function
+show_menu() {
+    clear
+    print_header "OpenMRS EMR4ALL Container Management"
+    echo "Current container status:"
+    docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+    echo ""
+    echo "Please select an action:"
+    echo "1) Build and start all containers"
+    echo "2) Rebuild all containers (from scratch)"
+    echo "3) Stop and delete containers"
+    echo "4) Prune Docker system (clean up unused resources)"
+    echo "5) Update frontend without rebuild (copy static assets)"
+    echo "6) Show container logs"
+    echo "7) Access container shell"
+    echo "8) Show container status"
+    echo "9) Exit"
+    echo ""
+}
+
+# Main program loop
+main() {
+    check_docker
+    
+    while true; do
+        show_menu
+        read -p "Enter your choice (1-9): " choice
+        echo ""
+        
+        case $choice in
+            1)
+                build_and_start
+                ;;
+            2)
+                rebuild_containers
+                ;;
+            3)
+                delete_containers
+                ;;
+            4)
+                prune_docker
+                ;;
+            5)
+                update_frontend
+                ;;
+            6)
+                show_logs
+                ;;
+            7)
+                access_shell
+                ;;
+            8)
+                show_status
+                ;;
+            9)
+                print_status "Goodbye!"
+                exit 0
+                ;;
+            *)
+                print_error "Invalid choice. Please select a number between 1 and 9."
+                ;;
+        esac
+        
+        echo ""
+        read -p "Press Enter to continue..."
+    done
+}
+
+# Run main function
+main "$@"
