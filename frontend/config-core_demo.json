@@ -31,7 +31,8 @@
   }
   ,
   "@openmrs/esm-styleguide": {
-    "Brand color #1": "#14B53A",
+    "Brand color #1": "#87CEEB",
+    "Brand color #2": "#012c3d",
     "implementationName": "MaliEMR"
   },
   "@openmrs/esm-login-app": {
