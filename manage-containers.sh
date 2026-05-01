@@ -182,6 +182,33 @@ prune_docker() {
     fi
 }
 
+# Function to clean up dangling images and containers
+cleanup_dangling() {
+    print_header "Cleaning Up Dangling Images and Containers"
+    print_status "Removing dangling images..."
+    DANGLING_IMAGES=$(docker images -f "dangling=true" -q)
+    if [ -n "$DANGLING_IMAGES" ]; then
+        docker rmi $DANGLING_IMAGES
+        print_status "Removed $(echo $DANGLING_IMAGES | wc -w) dangling images"
+    else
+        print_status "No dangling images found"
+    fi
+    
+    print_status "Removing stopped containers..."
+    STOPPED_CONTAINERS=$(docker ps -a -f "status=exited" -q)
+    if [ -n "$STOPPED_CONTAINERS" ]; then
+        docker rm $STOPPED_CONTAINERS
+        print_status "Removed $(echo $STOPPED_CONTAINERS | wc -w) stopped containers"
+    else
+        print_status "No stopped containers found"
+    fi
+    
+    print_status "Removing unused build cache..."
+    docker builder prune -f
+    
+    print_status "Cleanup completed!"
+}
+
 # Function to update frontend without rebuild
 update_frontend() {
     print_header "Updating Frontend (No Rebuild)"
@@ -293,12 +320,13 @@ show_menu() {
     echo "2) Rebuild all containers (from scratch)"
     echo "3) Stop and delete containers"
     echo "4) Prune Docker system (clean up unused resources)"
-    echo "5) Update frontend without rebuild (copy static assets)"
-    echo "6) Show container logs"
-    echo "7) Access container shell"
-    echo "8) Show container status"
-    echo "9) Fastfetch (quick system overview)"
-    echo "10) Exit"
+    echo "5) Clean up dangling images and containers"
+    echo "6) Update frontend without rebuild (copy static assets)"
+    echo "7) Show container logs"
+    echo "8) Access container shell"
+    echo "9) Show container status"
+    echo "10) Fastfetch (quick system overview)"
+    echo "11) Exit"
     echo ""
 }
 
@@ -310,7 +338,7 @@ main() {
     
     while true; do
         show_menu
-        read -p "Enter your choice (1-10): " choice
+        read -p "Enter your choice (1-11): " choice
         echo ""
         
         case $choice in
@@ -327,26 +355,29 @@ main() {
                 prune_docker
                 ;;
             5)
-                update_frontend
+                cleanup_dangling
                 ;;
             6)
-                show_logs
+                update_frontend
                 ;;
             7)
-                access_shell
+                show_logs
                 ;;
             8)
-                show_status
+                access_shell
                 ;;
             9)
-                fastfetch
+                show_status
                 ;;
             10)
+                fastfetch
+                ;;
+            11)
                 print_status "Goodbye!"
                 exit 0
                 ;;
             *)
-                print_error "Invalid choice. Please select a number between 1 and 10."
+                print_error "Invalid choice. Please select a number between 1 and 11."
                 ;;
         esac
         
