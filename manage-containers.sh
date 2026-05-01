@@ -197,6 +197,12 @@ update_frontend() {
     print_status "Copying updated config file..."
     docker cp frontend/config-core_demo.json $($DOCKER_COMPOSE_CMD ps -q frontend):/usr/share/nginx/html/
     
+    # Copy logo file if it exists
+    if [ -f "frontend/logo.png" ]; then
+        print_status "Copying logo file..."
+        docker cp frontend/logo.png $($DOCKER_COMPOSE_CMD ps -q frontend):/usr/share/nginx/html/
+    fi
+    
     # Restart nginx in the frontend container to reload config
     print_status "Reloading nginx configuration..."
     $DOCKER_COMPOSE_CMD exec frontend nginx -s reload
