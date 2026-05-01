@@ -31,10 +31,28 @@ print_header() {
     echo -e "${BLUE}================================${NC}"
 }
 
+# Function to detect Docker Compose command
+detect_docker_compose() {
+    if command -v docker-compose &> /dev/null; then
+        echo "docker-compose"
+    elif docker compose version &> /dev/null; then
+        echo "docker compose"
+    else
+        echo ""
+    fi
+}
+
 # Function to check if Docker is running
 check_docker() {
     if ! docker info > /dev/null 2>&1; then
         print_error "Docker is not running. Please start Docker first."
+        exit 1
+    fi
+    
+    # Check for Docker Compose
+    DOCKER_COMPOSE_CMD=$(detect_docker_compose)
+    if [ -z "$DOCKER_COMPOSE_CMD" ]; then
+        print_error "Docker Compose is not installed. Please install Docker Compose first."
         exit 1
     fi
 }
@@ -42,7 +60,7 @@ check_docker() {
 # Function to show container status
 show_status() {
     print_header "Container Status"
-    docker-compose ps
+    $DOCKER_COMPOSE_CMD ps
     echo ""
 }
 
@@ -60,8 +78,8 @@ fastfetch() {
     echo ""
     
     echo -e "${BLUE}Container Status:${NC}"
-    if docker-compose ps --services --quiet | xargs docker-compose ps 2>/dev/null | grep -q "Up"; then
-        docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}" | while IFS= read -r line; do
+    if $DOCKER_COMPOSE_CMD ps --services --quiet | xargs $DOCKER_COMPOSE_CMD ps 2>/dev/null | grep -q "Up"; then
+        $DOCKER_COMPOSE_CMD ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}" | while IFS= read -r line; do
             if [[ $line == *"Up"* ]]; then
                 echo "├── $line"
             else
@@ -104,9 +122,9 @@ fastfetch() {
 build_and_start() {
     print_header "Building and Starting Containers"
     print_status "Building all containers..."
-    docker-compose build --no-cache
+    $DOCKER_COMPOSE_CMD build --no-cache
     print_status "Starting all containers..."
-    docker-compose up -d
+    $DOCKER_COMPOSE_CMD up -d
     print_status "Containers are now running!"
     show_status
 }
@@ -119,13 +137,13 @@ rebuild_containers() {
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         print_status "Stopping containers..."
-        docker-compose down
+        $DOCKER_COMPOSE_CMD down
         print_status "Removing containers and images..."
-        docker-compose down --rmi all
+        $DOCKER_COMPOSE_CMD down --rmi all
         print_status "Rebuilding containers..."
-        docker-compose build --no-cache
+        $DOCKER_COMPOSE_CMD build --no-cache
         print_status "Starting containers..."
-        docker-compose up -d
+        $DOCKER_COMPOSE_CMD up -d
         print_status "Containers rebuilt and started!"
         show_status
     else
@@ -141,7 +159,7 @@ delete_containers() {
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         print_status "Stopping and removing containers..."
-        docker-compose down --volumes --remove-orphans
+        $DOCKER_COMPOSE_CMD down --volumes --remove-orphans
         print_status "Containers deleted!"
         show_status
     else
@@ -170,18 +188,18 @@ update_frontend() {
     print_status "Updating frontend configuration and static assets..."
     
     # Check if frontend container is running
-    if ! docker-compose ps frontend | grep -q "Up"; then
+    if ! $DOCKER_COMPOSE_CMD ps frontend | grep -q "Up"; then
         print_error "Frontend container is not running. Please start the containers first."
         return 1
     fi
     
     # Copy updated config file
     print_status "Copying updated config file..."
-    docker cp frontend/config-core_demo.json $(docker-compose ps -q frontend):/usr/share/nginx/html/
+    docker cp frontend/config-core_demo.json $($DOCKER_COMPOSE_CMD ps -q frontend):/usr/share/nginx/html/
     
     # Restart nginx in the frontend container to reload config
     print_status "Reloading nginx configuration..."
-    docker-compose exec frontend nginx -s reload
+    $DOCKER_COMPOSE_CMD exec frontend nginx -s reload
     
     print_status "Frontend updated successfully!"
     print_status "Changes should be reflected immediately in your browser."
@@ -201,19 +219,19 @@ show_logs() {
     
     case $log_choice in
         1)
-            docker-compose logs -f --tail=50
+            $DOCKER_COMPOSE_CMD logs -f --tail=50
             ;;
         2)
-            docker-compose logs -f --tail=50 frontend
+            $DOCKER_COMPOSE_CMD logs -f --tail=50 frontend
             ;;
         3)
-            docker-compose logs -f --tail=50 backend
+            $DOCKER_COMPOSE_CMD logs -f --tail=50 backend
             ;;
         4)
-            docker-compose logs -f --tail=50 gateway
+            $DOCKER_COMPOSE_CMD logs -f --tail=50 gateway
             ;;
         5)
-            docker-compose logs -f --tail=50 db
+            $DOCKER_COMPOSE_CMD logs -f --tail=50 db
             ;;
         6)
             return
@@ -237,16 +255,16 @@ access_shell() {
     
     case $shell_choice in
         1)
-            docker-compose exec frontend /bin/sh
+            $DOCKER_COMPOSE_CMD exec frontend /bin/sh
             ;;
         2)
-            docker-compose exec backend /bin/bash
+            $DOCKER_COMPOSE_CMD exec backend /bin/bash
             ;;
         3)
-            docker-compose exec gateway /bin/sh
+            $DOCKER_COMPOSE_CMD exec gateway /bin/sh
             ;;
         4)
-            docker-compose exec db /bin/bash
+            $DOCKER_COMPOSE_CMD exec db /bin/bash
             ;;
         5)
             return
@@ -262,7 +280,7 @@ show_menu() {
     clear
     print_header "OpenMRS EMR4ALL Container Management"
     echo "Current container status:"
-    docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+    $DOCKER_COMPOSE_CMD ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
     echo ""
     echo "Please select an action:"
     echo "1) Build and start all containers"
@@ -281,6 +299,8 @@ show_menu() {
 # Main program loop
 main() {
     check_docker
+    # Set global variable for Docker Compose command
+    DOCKER_COMPOSE_CMD=$(detect_docker_compose)
     
     while true; do
         show_menu
