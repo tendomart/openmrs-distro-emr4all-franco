@@ -34,19 +34,19 @@
     "Brand color #1": "#87CEEB",
     "Brand color #2": "#012c3d",
     "Brand color #3": "#012c3d",
-    "implementationName": "MaliEMR"
+    "implementationName": "CongoEMR"
   },
   "@openmrs/esm-login-app": {
     "logo": {
       "src": "/openmrs/spa/logo.png",
-      "alt": "MaliEMR"
+      "alt": "CongoEMR"
     }
   },
   "footer": {
       "additionalLogos": [
         {
           "src": "/openmrs/spa/logo.png",
-          "alt": "MaliEMR",
+          "alt": "CongoEMR",
           "link": "https://maliemr.org" 
         } 
       ]
