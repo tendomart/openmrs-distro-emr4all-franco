@@ -2,6 +2,8 @@ services:
   gateway:
     image: openmrs/openmrs-reference-application-3-gateway:${TAG:-qa}
     restart: "unless-stopped"
+    volumes:
+    - ./nginx-extra.conf:/etc/nginx/conf.d/extra.conf:ro
     depends_on:
       - frontend
       - backend
@@ -40,6 +42,8 @@ services:
       timeout: 5s
     volumes:
       - openmrs-data:/openmrs/data
+    extra_hosts:
+      - "dhis2.local:host-gateway"
 
   # MariaDB
   db:
@@ -62,3 +66,5 @@ services:
 volumes:
   openmrs-data: ~
   db-data: ~
+  nginx-extra: ~
+
