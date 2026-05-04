@@ -43,7 +43,7 @@ services:
     volumes:
       - openmrs-data:/openmrs/data
     extra_hosts:
-      - "0522b36732b223b6f5da86f097d3849b.f0e494e830ecfeca291478c14acde0e6.traefik.default:host-gateway"
+      - "dhis2.internal:host-gateway"
 
   # MariaDB
   db:
