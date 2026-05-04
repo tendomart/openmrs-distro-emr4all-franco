@@ -43,7 +43,7 @@ services:
     volumes:
       - openmrs-data:/openmrs/data
     extra_hosts:
-      - "dhis2.local:host-gateway"
+      - "TRAEFIK DEFAULT CERT:host-gateway"
 
   # MariaDB
   db:
