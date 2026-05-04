@@ -42,6 +42,13 @@
       "alt": "CongoEMR"
     }
   },
+  "@openmrs/esm-primary-navigation-app": {
+    "logo": {
+      "src": "/openmrs/spa/logo.png",
+      "alt": "CongoEMR logo",
+      "link": "${openmrsSpaBase}/home"
+    }
+  },
   "footer": {
       "additionalLogos": [
         {
