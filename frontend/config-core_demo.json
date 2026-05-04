@@ -31,7 +31,7 @@
   }
   ,
   "@openmrs/esm-styleguide": {
-    "Brand color #1": "#007FFF",
+    "Brand color #1": "#0085CA",
     "Brand color #2": "#012c3d",
     "Brand color #3": "#012c3d",
     "implementationName": "CongoEMR"
