@@ -290,6 +290,110 @@ update_frontend() {
     print_status "Clear browser cache (Ctrl+F5) if changes are not visible."
 }
 
+# Function to probe every concept referenced by the O3 form JSONs against the
+# live backend, reporting any UUIDs the DB cannot resolve (which is the root
+# cause of "Cannot invoke Obs.getConcept()" NPEs on encounter save).
+probe_form_concepts() {
+    print_header "Probing O3 Form Concepts Against Backend"
+
+    FORMS_DIR="distro/configuration/forms"
+    if [ ! -d "$FORMS_DIR" ]; then
+        print_error "Forms directory not found: $FORMS_DIR"
+        return 1
+    fi
+
+    # Verify backend is reachable
+    if ! $DOCKER_COMPOSE_CMD ps backend | grep -q "Up"; then
+        print_error "Backend container is not running. Start the stack first."
+        return 1
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        print_error "python3 is required on the host to extract concept UUIDs."
+        return 1
+    fi
+    if ! command -v curl >/dev/null 2>&1; then
+        print_error "curl is required on the host."
+        return 1
+    fi
+
+    # Credentials (override via env OMRS_ADMIN_USER / OMRS_ADMIN_PASSWORD)
+    OMRS_ADMIN_USER="${OMRS_ADMIN_USER:-admin}"
+    OMRS_ADMIN_PASSWORD="${OMRS_ADMIN_PASSWORD:-Admin123}"
+    # Probe via the gateway (port 80) so routing matches a real user request
+    BASE_URL="${OMRS_BASE_URL:-http://localhost/openmrs}"
+
+    TMP_UUIDS=$(mktemp)
+    TMP_MISSING=$(mktemp)
+
+    # Extract every obs / answer / toggleOptions concept UUID from every form
+    python3 - "$FORMS_DIR" <<'PY' > "$TMP_UUIDS"
+import json, os, sys, glob
+forms_dir = sys.argv[1]
+uuids = {}
+for path in sorted(glob.glob(os.path.join(forms_dir, "*.json"))):
+    try:
+        d = json.load(open(path))
+    except Exception as e:
+        print(f"# PARSE ERROR {path}: {e}", file=sys.stderr); continue
+    for p in d.get("pages", []):
+        for s in p.get("sections", []):
+            for q in s.get("questions", []):
+                if q.get("type") != "obs": continue
+                o = q.get("questionOptions") or {}
+                def add(u, where):
+                    if isinstance(u, str) and len(u) == 36:
+                        uuids.setdefault(u, []).append(where)
+                add(o.get("concept"), f"{os.path.basename(path)}::{q.get('id')}")
+                for a in (o.get("answers") or []):
+                    add(a.get("concept"), f"{os.path.basename(path)}::{q.get('id')}.answer")
+                t = o.get("toggleOptions") or {}
+                for side in ("checked", "unchecked"):
+                    v = (t.get(side) or {}).get("concept")
+                    add(v, f"{os.path.basename(path)}::{q.get('id')}.toggle.{side}")
+for u, refs in sorted(uuids.items()):
+    print(f"{u}\t{';'.join(refs)}")
+PY
+
+    TOTAL=$(wc -l < "$TMP_UUIDS" | tr -d ' ')
+    if [ "$TOTAL" = "0" ]; then
+        print_warning "No obs concept UUIDs found in $FORMS_DIR/*.json"
+        rm -f "$TMP_UUIDS" "$TMP_MISSING"
+        return 0
+    fi
+    print_status "Probing $TOTAL unique concept UUIDs against $BASE_URL ..."
+    echo ""
+
+    : > "$TMP_MISSING"
+    while IFS=$'\t' read -r UUID REFS; do
+        [ -z "$UUID" ] && continue
+        CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -u "$OMRS_ADMIN_USER:$OMRS_ADMIN_PASSWORD" \
+            "$BASE_URL/ws/rest/v1/concept/$UUID")
+        if [ "$CODE" = "200" ]; then
+            printf "  \033[0;32mOK\033[0m    %s  %s\n" "$UUID" "$REFS"
+        else
+            printf "  \033[0;31mMISS\033[0m  %s  (HTTP %s)  %s\n" "$UUID" "$CODE" "$REFS"
+            echo "$UUID	$CODE	$REFS" >> "$TMP_MISSING"
+        fi
+    done < "$TMP_UUIDS"
+
+    echo ""
+    MISSING=$(wc -l < "$TMP_MISSING" | tr -d ' ')
+    if [ "$MISSING" = "0" ]; then
+        print_status "All $TOTAL concepts resolved. No NPE risk from missing concepts."
+    else
+        print_error "$MISSING of $TOTAL concepts are NOT in the DB."
+        print_warning "These will cause 'Cannot invoke Obs.getConcept()' NPEs when users answer those questions."
+        print_warning "Load them via OCL (Open Concept Lab) or add them to distro/configuration/concepts/*.csv."
+        echo ""
+        echo "Missing (UUID / HTTP / references):"
+        cat "$TMP_MISSING"
+    fi
+
+    rm -f "$TMP_UUIDS" "$TMP_MISSING"
+}
+
 # Function to manage an individual service (start / stop / restart / rebuild)
 manage_service() {
     print_header "Manage Individual Container"
@@ -457,7 +561,8 @@ show_menu() {
     echo "10) Show container status"
     echo "11) Fastfetch (quick system overview)"
     echo "12) Manage individual container (start / stop / restart / rebuild)"
-    echo "13) Exit"
+    echo "13) Probe form concepts against backend (diagnose save NPEs)"
+    echo "14) Exit"
     echo ""
 }
 
@@ -469,7 +574,7 @@ main() {
     
     while true; do
         show_menu
-        read -p "Enter your choice (1-13): " choice
+        read -p "Enter your choice (1-14): " choice
         echo ""
         
         case $choice in
@@ -510,11 +615,14 @@ main() {
                 manage_service
                 ;;
             13)
+                probe_form_concepts
+                ;;
+            14)
                 print_status "Goodbye!"
                 exit 0
                 ;;
             *)
-                print_error "Invalid choice. Please select a number between 1 and 13."
+                print_error "Invalid choice. Please select a number between 1 and 14."
                 ;;
         esac
         

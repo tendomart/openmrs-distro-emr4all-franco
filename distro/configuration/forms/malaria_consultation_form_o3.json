@@ -310,18 +310,18 @@
                 "rendering": "toggle",
                 "concept": "160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                 "conceptMappings": [{ "type": "CIEL", "value": "160428" }],
-                "answers": [
-                  {
+                "toggleOptions": {
+                  "checked": {
                     "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Yes / Oui",
                     "conceptMappings": [{ "type": "CIEL", "value": "1065" }]
                   },
-                  {
+                  "unchecked": {
                     "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "No / Non",
                     "conceptMappings": [{ "type": "CIEL", "value": "1066" }]
                   }
-                ]
+                }
               }
             }
           ]
