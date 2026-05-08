@@ -473,13 +473,14 @@ for path in files:
         continue
 
     l_uuid    = local.get("uuid")
-    l_name    = local.get("name", "")
+    # OpenMRS normalises whitespace on Form.name, so compare trimmed values
+    l_name    = (local.get("name") or "").strip()
     l_version = str(local.get("version", ""))
     l_pub     = bool(local.get("published"))
     l_hash    = canonical_hash(local)
 
     print(f"--- {name} ---")
-    print(f"  local : uuid={l_uuid} name={l_name!r} version={l_version} published={l_pub} sha={l_hash}")
+    print(f"  local : uuid={l_uuid} name={l_name!r} version={l_version} published={l_pub}")
 
     if not l_uuid:
         print(f"  {RED}MISSING uuid in local file{RESET}")
@@ -507,30 +508,38 @@ for path in files:
         print()
         continue
 
-    s_name    = form.get("name", "")
+    s_name    = (form.get("name") or "").strip()
     s_version = str(form.get("version", ""))
     s_pub     = bool(form.get("published"))
     s_retired = bool(form.get("retired"))
 
-    # Try to fetch the schema clob via the o3forms module to do a content diff
-    s_hash = "?"
+    # Try to fetch the schema clob via the o3forms module to do a content diff.
+    # If the endpoint isn't available in this distro, schema check is skipped
+    # (not treated as a diff) -- only a metadata comparison is performed.
+    s_hash = None
+    schema_status = "skipped (endpoint unavailable)"
     code2, body2 = http_get(f"/ws/rest/v1/o3forms/{l_uuid}")
     if code2 == 200:
         try:
             s_hash = canonical_hash(json.loads(body2))
+            schema_status = f"sha={s_hash}"
         except Exception:
-            s_hash = "unparseable"
+            schema_status = "unparseable schema response"
 
-    print(f"  server: uuid={l_uuid} name={s_name!r} version={s_version} published={s_pub} retired={s_retired} sha={s_hash}")
+    server_line = f"  server: uuid={l_uuid} name={s_name!r} version={s_version} published={s_pub} retired={s_retired}"
+    if s_hash is not None:
+        server_line += f" sha={s_hash}"
+    print(server_line)
+    print(f"  schema: local sha={l_hash}  server schema: {schema_status}")
 
     if s_retired:
         print(f"  {YELLOW}WARNING server form is retired{RESET}")
 
     flags = []
-    if l_name != s_name:       flags.append("name differs")
+    if l_name != s_name:       flags.append(f"name differs ({l_name!r} vs {s_name!r})")
     if l_version != s_version: flags.append(f"version differs ({l_version} vs {s_version})")
     if l_pub != s_pub:         flags.append(f"published differs ({l_pub} vs {s_pub})")
-    schema_diff = (s_hash not in ("?", "unparseable") and s_hash != l_hash)
+    schema_diff = (s_hash is not None and s_hash != l_hash)
     if schema_diff:            flags.append("schema content differs")
 
     if not flags:
