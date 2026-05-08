@@ -290,6 +290,83 @@ update_frontend() {
     print_status "Clear browser cache (Ctrl+F5) if changes are not visible."
 }
 
+# Function to manage an individual service (start / stop / restart / rebuild)
+manage_service() {
+    print_header "Manage Individual Container"
+    echo "Select a service:"
+    echo "1) gateway"
+    echo "2) frontend"
+    echo "3) backend"
+    echo "4) db"
+    echo "5) Return to main menu"
+    read -p "Enter your choice (1-5): " svc_choice
+
+    case $svc_choice in
+        1) SERVICE="gateway" ;;
+        2) SERVICE="frontend" ;;
+        3) SERVICE="backend" ;;
+        4) SERVICE="db" ;;
+        5) return ;;
+        *)
+            print_error "Invalid choice. Returning to main menu."
+            return
+            ;;
+    esac
+
+    echo ""
+    echo "Select an action for '$SERVICE':"
+    echo "1) Start"
+    echo "2) Stop"
+    echo "3) Restart"
+    echo "4) Rebuild (no-cache) and recreate"
+    echo "5) Return to main menu"
+    read -p "Enter your choice (1-5): " act_choice
+
+    case $act_choice in
+        1)
+            print_status "Starting $SERVICE..."
+            $DOCKER_COMPOSE_CMD up -d "$SERVICE"
+            ;;
+        2)
+            print_status "Stopping $SERVICE..."
+            $DOCKER_COMPOSE_CMD stop "$SERVICE"
+            ;;
+        3)
+            print_status "Restarting $SERVICE..."
+            $DOCKER_COMPOSE_CMD restart "$SERVICE"
+            ;;
+        4)
+            # 'db' has no build context, warn early
+            if [ "$SERVICE" = "db" ]; then
+                print_warning "'db' uses an upstream image and has no build context; nothing to rebuild."
+                return
+            fi
+            print_warning "Rebuilding '$SERVICE' from scratch (no cache)..."
+            read -p "Are you sure? (y/N): " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                print_status "Building $SERVICE..."
+                $DOCKER_COMPOSE_CMD build --no-cache "$SERVICE"
+                print_status "Recreating $SERVICE..."
+                $DOCKER_COMPOSE_CMD up -d --force-recreate --no-deps "$SERVICE"
+                print_status "$SERVICE rebuilt and started."
+            else
+                print_status "Rebuild cancelled."
+            fi
+            ;;
+        5)
+            return
+            ;;
+        *)
+            print_error "Invalid choice. Returning to main menu."
+            return
+            ;;
+    esac
+
+    echo ""
+    show_status
+}
+
 # Function to show logs
 show_logs() {
     print_header "Showing Container Logs"
@@ -379,7 +456,8 @@ show_menu() {
     echo "9) Access container shell"
     echo "10) Show container status"
     echo "11) Fastfetch (quick system overview)"
-    echo "12) Exit"
+    echo "12) Manage individual container (start / stop / restart / rebuild)"
+    echo "13) Exit"
     echo ""
 }
 
@@ -391,7 +469,7 @@ main() {
     
     while true; do
         show_menu
-        read -p "Enter your choice (1-12): " choice
+        read -p "Enter your choice (1-13): " choice
         echo ""
         
         case $choice in
@@ -429,11 +507,14 @@ main() {
                 fastfetch
                 ;;
             12)
+                manage_service
+                ;;
+            13)
                 print_status "Goodbye!"
                 exit 0
                 ;;
             *)
-                print_error "Invalid choice. Please select a number between 1 and 12."
+                print_error "Invalid choice. Please select a number between 1 and 13."
                 ;;
         esac
         
