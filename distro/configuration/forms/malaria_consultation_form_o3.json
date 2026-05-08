@@ -1,0 +1,538 @@
+{
+  "name": "RDC - Malaria Consultation Form ",
+  "description": "Standardized malaria data collection per WHO Test-Treat-Track guidelines, National DRC Protocol (GUIDE-SURVEILLANCE-MMNMCP), and EMR4ALL French Countries specification.",
+  "version": "1",
+  "published": true,
+  "retired": false,
+  "encounter": "Malaria Consultation",
+  "allowUnspecified": true,
+  "pages": [
+    {
+      "label": "Page 1: Clinical Assessment (Signes de Danger)",
+      "sections": [
+        {
+          "label": "Patient Vitals / Signes Vitaux",
+          "isExpanded": "true",
+          "questions": [
+            {
+              "label": "Weight (kg) / Poids (kg)",
+              "type": "obs",
+              "id": "weight",
+              "required": true,
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "min": "0.5",
+                "max": "200",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "5089"
+                  }
+                ]
+              },
+              "validators": [
+                {
+                  "type": "range",
+                  "min": "0.5",
+                  "max": "200",
+                  "allowDecimals": true
+                }
+              ]
+            },
+            {
+              "label": "Temperature (°C) / Température (°C)",
+              "type": "obs",
+              "id": "temperature",
+              "required": false,
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "min": "34",
+                "max": "43",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "5088"
+                  }
+                ]
+              },
+              "validators": [
+                {
+                  "type": "range",
+                  "min": "34",
+                  "max": "43",
+                  "allowDecimals": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Danger Signs / Signes de Danger",
+          "isExpanded": "true",
+          "questions": [
+            {
+              "label": "Danger Signs / Signes de Danger",
+              "type": "obs",
+              "id": "dangerSigns",
+              "required": false,
+              "questionInfo": "Select all danger signs present. Any selection will trigger a SEVERE MALARIA alert and recommend immediate stabilization.",
+              "questionOptions": {
+                "rendering": "checkbox",
+                "concept": "162568AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "162568"
+                  }
+                ],
+                "answers": [
+                  {
+                    "concept": "113054AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Convulsions / Convulsions",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "113054"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "143050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Lethargy / Unconsciousness (Léthargie / Inconscience)",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "143050"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Unable to Drink or Breastfeed (Incapacité de boire/téter)",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "152761"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "122496AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Respiratory Distress (Détresse respiratoire)",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "122496"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "135595AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Persistent Vomiting (Vomissements persistants)",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "135595"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "label": "⚠️ SEVERE MALARIA ALERT — Immediate stabilization and referral required! / ALERTE PALUDISME GRAVE — Stabilisation et référence immédiates requises !",
+              "type": "obs",
+              "id": "severeMalariaAlertNote",
+              "questionOptions": {
+                "rendering": "text",
+                "concept": "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "162169"
+                  }
+                ]
+              },
+              "hide": {
+                "hideWhenExpression": "isEmpty(dangerSigns)"
+              },
+              "validators": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Page 2: Laboratory Diagnosis (Confirmation Biologique)",
+      "sections": [
+        {
+          "label": "Diagnostic Test / Test Diagnostique",
+          "isExpanded": "true",
+          "questions": [
+            {
+              "label": "Test Performed / Test Effectué",
+              "type": "obs",
+              "id": "testPerformed",
+              "required": true,
+              "questionOptions": {
+                "rendering": "radio",
+                "concept": "1643AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "1643"
+                  }
+                ],
+                "answers": [
+                  {
+                    "concept": "1643AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "RDT — Rapid Diagnostic Test (Test de Diagnostic Rapide)",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "1643"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "32AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Microscopy / Blood Smear (Frottis / Goutte Épaisse)",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "32"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Test Result / Résultat du Test",
+              "type": "obs",
+              "id": "testResult",
+              "required": true,
+              "questionOptions": {
+                "rendering": "radio",
+                "concept": "1138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "1138"
+                  }
+                ],
+                "answers": [
+                  {
+                    "concept": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Positive",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "703"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Negative",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "664"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Parasite Density / Densité Parasitaire (parasites/µL)",
+              "type": "obs",
+              "id": "parasiteDensity",
+              "required": false,
+              "questionInfo": "Only applicable when Microscopy / Blood Smear is selected.",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "887AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "887"
+                  }
+                ],
+                "min": "0"
+              },
+              "hide": {
+                "hideWhenExpression": "testPerformed !== '32AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'"
+              }
+            },
+            {
+              "label": "Plasmodium Species / Espèce de Plasmodium",
+              "type": "obs",
+              "id": "plasmodiumSpecies",
+              "required": false,
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "160101AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "160101"
+                  }
+                ],
+                "answers": [
+                  {
+                    "concept": "116125AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "P. falciparum",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "116125"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "P. vivax",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "116124"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "hide": {
+                "hideWhenExpression": "testResult !== '703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Page 3: Management & Disposition (Traitement & Issue)",
+      "sections": [
+        {
+          "label": "Final Classification / Classification Finale",
+          "isExpanded": "true",
+          "questions": [
+            {
+              "label": "Final Classification / Classification Finale",
+              "type": "obs",
+              "id": "classification",
+              "required": true,
+              "questionInfo": "Hidden if Lab Result is Negative. Select Severe if any danger sign was recorded.",
+              "questionOptions": {
+                "rendering": "radio",
+                "concept": "160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "160108"
+                  }
+                ],
+                "answers": [
+                  {
+                    "concept": "116128AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Uncomplicated Malaria (Paludisme Simple)",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "116128"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Severe Malaria (Paludisme Grave)",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "116126"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "hide": {
+                "hideWhenExpression": "testResult !== '703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'"
+              }
+            }
+          ]
+        },
+        {
+          "label": "Treatment / Traitement (ACT Protocol)",
+          "isExpanded": "true",
+          "questions": [
+            {
+              "label": "Antimalarial Drug Prescribed / Antipaludique Prescrit",
+              "type": "obs",
+              "id": "antimalarialDrug",
+              "required": false,
+              "questionInfo": "IV Artesunate option is only shown for Severe Malaria classification. Cannot be prescribed if Lab Result is Negative.",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "1282"
+                  }
+                ],
+                "answers": [
+                  {
+                    "concept": "161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "AL — Artemether-Lumefantrine",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "161350"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "160515AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "ASAQ — Artesunate-Amodiaquine",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "160515"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "IV Artesunate (Severe Malaria Only / Paludisme Grave uniquement)",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "71100"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "hide": {
+                "hideWhenExpression": "testResult !== '703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'"
+              },
+              "validators": [
+                {
+                  "type": "js_expression",
+                  "failsWhenExpression": "!isEmpty(antimalarialDrug) && testResult === '664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'",
+                  "message": "Antimalarial drug cannot be prescribed when the laboratory result is Negative. / Un antipaludique ne peut pas être prescrit si le résultat de laboratoire est Négatif."
+                },
+                {
+                  "type": "js_expression",
+                  "failsWhenExpression": "antimalarialDrug === '71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' && classification !== '116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'",
+                  "message": "IV Artesunate is reserved for Severe Malaria only. / L'Artésunate IV est réservé au Paludisme Grave uniquement."
+                }
+              ]
+            },
+            {
+              "label": "LLIN Bednet Usage / Utilisation de MILDA (Moustiquaire Imprégnée d'Insecticide Longue Durée d'Action)",
+              "type": "obs",
+              "id": "llinUsage",
+              "required": false,
+              "questionInfo": "Prevention tracking — record whether the patient uses a Long-Lasting Insecticidal Net.",
+              "questionOptions": {
+                "rendering": "toggle",
+                "concept": "160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "160428"
+                  }
+                ],
+                "toggleOptions": {
+                  "checked": {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes / Oui",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "1065"
+                      }
+                    ]
+                  },
+                  "unchecked": {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No / Non",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "1066"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "label": "Disposition / Issue de la Consultation",
+          "isExpanded": "true",
+          "questions": [
+            {
+              "label": "Disposition / Issue de la Consultation",
+              "type": "obs",
+              "id": "disposition",
+              "required": true,
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "160430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "conceptMappings": [
+                  {
+                    "type": "CIEL",
+                    "value": "160430"
+                  }
+                ],
+                "answers": [
+                  {
+                    "concept": "159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Discharged Home / Retour à domicile",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "159492"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "160523AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Admitted / Hospitalisé",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "160523"
+                      }
+                    ]
+                  },
+                  {
+                    "concept": "159AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Referred / Référé",
+                    "conceptMappings": [
+                      {
+                        "type": "CIEL",
+                        "value": "159"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "hide": {
+                "hideWhenExpression": "testResult !== '703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "encounterType": "e22e39fd-7db2-45e7-80f1-60fa0d5a4378",
+  "uuid": "911fa65a-d5c1-487d-82a5-19c4c3d0164b"
+}

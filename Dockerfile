@@ -24,6 +24,10 @@ RUN cp -R /openmrs_distro/distro/target/sdk-distro/web/openmrs_modules /openmrs/
 RUN cp -R /openmrs_distro/distro/target/sdk-distro/web/openmrs_owas /openmrs/distribution/openmrs_owas/
 RUN cp -R /openmrs_distro/distro/target/sdk-distro/web/openmrs_config /openmrs/distribution/openmrs_config/
 
+# Overlay custom Initializer configuration (e.g. O3 JSON forms) on top of the
+# config baked into the SDK distro by the reference content packages.
+COPY distro/configuration /openmrs/distribution/openmrs_config/configuration
+
 # Clean up after copying needed artifacts
 RUN mvn $MVN_ARGS clean
 
