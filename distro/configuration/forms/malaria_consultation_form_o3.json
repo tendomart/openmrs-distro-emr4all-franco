@@ -5,6 +5,8 @@
   "published": true,
   "retired": false,
   "encounter": "Malaria Consultation",
+  "encounterType": "e22e39fd-7db2-45e7-80f1-60fa0d5a4378",
+  "uuid": "911fa65a-d5c1-487d-82a5-19c4c3d0164b",
   "allowUnspecified": true,
   "pages": [
     {
@@ -24,12 +26,7 @@
                 "concept": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                 "min": "0.5",
                 "max": "200",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "5089"
-                  }
-                ]
+                "conceptMappings": [{ "type": "CIEL", "value": "5089" }]
               },
               "validators": [
                 {
@@ -50,12 +47,7 @@
                 "concept": "5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                 "min": "34",
                 "max": "43",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "5088"
-                  }
-                ]
+                "conceptMappings": [{ "type": "CIEL", "value": "5088" }]
               },
               "validators": [
                 {
@@ -81,85 +73,46 @@
               "questionOptions": {
                 "rendering": "checkbox",
                 "concept": "162568AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "162568"
-                  }
-                ],
+                "conceptMappings": [{ "type": "CIEL", "value": "162568" }],
                 "answers": [
                   {
                     "concept": "113054AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Convulsions / Convulsions",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "113054"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "113054" }]
                   },
                   {
                     "concept": "143050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Lethargy / Unconsciousness (Léthargie / Inconscience)",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "143050"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "143050" }]
                   },
                   {
                     "concept": "152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Unable to Drink or Breastfeed (Incapacité de boire/téter)",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "152761"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "152761" }]
                   },
                   {
                     "concept": "122496AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Respiratory Distress (Détresse respiratoire)",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "122496"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "122496" }]
                   },
                   {
                     "concept": "135595AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Persistent Vomiting (Vomissements persistants)",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "135595"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "135595" }]
                   }
                 ]
               }
             },
+
             {
-              "label": "⚠️ SEVERE MALARIA ALERT — Immediate stabilization and referral required! / ALERTE PALUDISME GRAVE — Stabilisation et référence immédiates requises !",
-              "type": "obs",
+              "type": "markdown",
               "id": "severeMalariaAlertNote",
-              "questionOptions": {
-                "rendering": "text",
-                "concept": "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "162169"
-                  }
-                ]
-              },
+              "value": "### ⚠️ ALERTE PALUDISME GRAVE / SEVERE MALARIA ALERT\n**Stabilisation et référence immédiates requises.**  \n**Immediate stabilization and referral required.**",
               "hide": {
                 "hideWhenExpression": "isEmpty(dangerSigns)"
-              },
-              "validators": []
+              }
             }
+
           ]
         }
       ]
@@ -179,32 +132,17 @@
               "questionOptions": {
                 "rendering": "radio",
                 "concept": "1643AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "1643"
-                  }
-                ],
+                "conceptMappings": [{ "type": "CIEL", "value": "1643" }],
                 "answers": [
                   {
                     "concept": "1643AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "RDT — Rapid Diagnostic Test (Test de Diagnostic Rapide)",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "1643"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "1643" }]
                   },
                   {
                     "concept": "32AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Microscopy / Blood Smear (Frottis / Goutte Épaisse)",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "32"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "32" }]
                   }
                 ]
               }
@@ -217,32 +155,17 @@
               "questionOptions": {
                 "rendering": "radio",
                 "concept": "1138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "1138"
-                  }
-                ],
+                "conceptMappings": [{ "type": "CIEL", "value": "1138" }],
                 "answers": [
                   {
                     "concept": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Positive",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "703"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "703" }]
                   },
                   {
                     "concept": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Negative",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "664"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "664" }]
                   }
                 ]
               }
@@ -256,12 +179,7 @@
               "questionOptions": {
                 "rendering": "number",
                 "concept": "887AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "887"
-                  }
-                ],
+                "conceptMappings": [{ "type": "CIEL", "value": "887" }],
                 "min": "0"
               },
               "hide": {
@@ -276,32 +194,17 @@
               "questionOptions": {
                 "rendering": "select",
                 "concept": "160101AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "160101"
-                  }
-                ],
+                "conceptMappings": [{ "type": "CIEL", "value": "160101" }],
                 "answers": [
                   {
                     "concept": "116125AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "P. falciparum",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "116125"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "116125" }]
                   },
                   {
                     "concept": "116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "P. vivax",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "116124"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "116124" }]
                   }
                 ]
               },
@@ -329,32 +232,17 @@
               "questionOptions": {
                 "rendering": "radio",
                 "concept": "160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "160108"
-                  }
-                ],
+                "conceptMappings": [{ "type": "CIEL", "value": "160108" }],
                 "answers": [
                   {
                     "concept": "116128AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Uncomplicated Malaria (Paludisme Simple)",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "116128"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "116128" }]
                   },
                   {
                     "concept": "116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Severe Malaria (Paludisme Grave)",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "116126"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "116126" }]
                   }
                 ]
               },
@@ -377,42 +265,22 @@
               "questionOptions": {
                 "rendering": "select",
                 "concept": "1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "1282"
-                  }
-                ],
+                "conceptMappings": [{ "type": "CIEL", "value": "1282" }],
                 "answers": [
                   {
                     "concept": "161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "AL — Artemether-Lumefantrine",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "161350"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "161350" }]
                   },
                   {
                     "concept": "160515AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "ASAQ — Artesunate-Amodiaquine",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "160515"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "160515" }]
                   },
                   {
                     "concept": "71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "IV Artesunate (Severe Malaria Only / Paludisme Grave uniquement)",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "71100"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "71100" }]
                   }
                 ]
               },
@@ -441,34 +309,19 @@
               "questionOptions": {
                 "rendering": "toggle",
                 "concept": "160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
+                "conceptMappings": [{ "type": "CIEL", "value": "160428" }],
+                "answers": [
                   {
-                    "type": "CIEL",
-                    "value": "160428"
-                  }
-                ],
-                "toggleOptions": {
-                  "checked": {
                     "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Yes / Oui",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "1065"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "1065" }]
                   },
-                  "unchecked": {
+                  {
                     "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "No / Non",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "1066"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "1066" }]
                   }
-                }
+                ]
               }
             }
           ]
@@ -485,42 +338,22 @@
               "questionOptions": {
                 "rendering": "select",
                 "concept": "160430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                "conceptMappings": [
-                  {
-                    "type": "CIEL",
-                    "value": "160430"
-                  }
-                ],
+                "conceptMappings": [{ "type": "CIEL", "value": "160430" }],
                 "answers": [
                   {
                     "concept": "159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Discharged Home / Retour à domicile",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "159492"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "159492" }]
                   },
                   {
                     "concept": "160523AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Admitted / Hospitalisé",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "160523"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "160523" }]
                   },
                   {
                     "concept": "159AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Referred / Référé",
-                    "conceptMappings": [
-                      {
-                        "type": "CIEL",
-                        "value": "159"
-                      }
-                    ]
+                    "conceptMappings": [{ "type": "CIEL", "value": "159" }]
                   }
                 ]
               },
@@ -532,7 +365,5 @@
         }
       ]
     }
-  ],
-  "encounterType": "e22e39fd-7db2-45e7-80f1-60fa0d5a4378",
-  "uuid": "911fa65a-d5c1-487d-82a5-19c4c3d0164b"
+  ]
 }
