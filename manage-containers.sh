@@ -394,6 +394,168 @@ PY
     rm -f "$TMP_UUIDS" "$TMP_MISSING"
 }
 
+# Function to compare every local O3 form JSON against what is actually
+# deployed in the backend DB. Reports whether each form is missing, stale
+# (different version or schema), or in sync.
+check_form_versions() {
+    print_header "Form Version Checker"
+
+    FORMS_DIR="distro/configuration/forms"
+    if [ ! -d "$FORMS_DIR" ]; then
+        print_error "Forms directory not found: $FORMS_DIR"
+        return 1
+    fi
+
+    if ! $DOCKER_COMPOSE_CMD ps backend | grep -q "Up"; then
+        print_error "Backend container is not running. Start the stack first."
+        return 1
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        print_error "python3 is required on the host."
+        return 1
+    fi
+
+    OMRS_ADMIN_USER="${OMRS_ADMIN_USER:-admin}"
+    OMRS_ADMIN_PASSWORD="${OMRS_ADMIN_PASSWORD:-Admin123}"
+    BASE_URL="${OMRS_BASE_URL:-http://localhost/openmrs}"
+
+    print_status "Comparing local files in $FORMS_DIR against $BASE_URL ..."
+    echo ""
+
+    OMRS_ADMIN_USER="$OMRS_ADMIN_USER" \
+    OMRS_ADMIN_PASSWORD="$OMRS_ADMIN_PASSWORD" \
+    BASE_URL="$BASE_URL" \
+    FORMS_DIR="$FORMS_DIR" \
+    python3 - <<'PY'
+import os, sys, json, glob, hashlib, base64
+from urllib import request, error
+
+base = os.environ["BASE_URL"].rstrip("/")
+user = os.environ["OMRS_ADMIN_USER"]
+pwd  = os.environ["OMRS_ADMIN_PASSWORD"]
+forms_dir = os.environ["FORMS_DIR"]
+
+GREEN = "\033[0;32m"; RED = "\033[0;31m"; YELLOW = "\033[1;33m"; RESET = "\033[0m"
+
+def http_get(path):
+    url = f"{base}{path}"
+    req = request.Request(url)
+    creds = base64.b64encode(f"{user}:{pwd}".encode()).decode()
+    req.add_header("Authorization", f"Basic {creds}")
+    req.add_header("Accept", "application/json")
+    try:
+        with request.urlopen(req, timeout=10) as r:
+            return r.status, r.read().decode("utf-8", errors="replace")
+    except error.HTTPError as e:
+        return e.code, e.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        return 0, str(e)
+
+def canonical_hash(obj):
+    return hashlib.sha256(
+        json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()[:12]
+
+files = sorted(glob.glob(os.path.join(forms_dir, "*.json")))
+if not files:
+    print(f"{YELLOW}No form files found in {forms_dir}{RESET}")
+    sys.exit(0)
+
+summary = []
+for path in files:
+    name = os.path.basename(path)
+    try:
+        local = json.load(open(path))
+    except Exception as e:
+        print(f"{RED}PARSE ERROR{RESET}  {name}: {e}")
+        summary.append((name, "PARSE_ERROR"))
+        continue
+
+    l_uuid    = local.get("uuid")
+    l_name    = local.get("name", "")
+    l_version = str(local.get("version", ""))
+    l_pub     = bool(local.get("published"))
+    l_hash    = canonical_hash(local)
+
+    print(f"--- {name} ---")
+    print(f"  local : uuid={l_uuid} name={l_name!r} version={l_version} published={l_pub} sha={l_hash}")
+
+    if not l_uuid:
+        print(f"  {RED}MISSING uuid in local file{RESET}")
+        summary.append((name, "NO_LOCAL_UUID"))
+        print()
+        continue
+
+    code, body = http_get(f"/ws/rest/v1/form/{l_uuid}?v=full")
+    if code == 404:
+        print(f"  {RED}NOT DEPLOYED{RESET} (HTTP 404). Backend has no form with uuid {l_uuid}.")
+        summary.append((name, "NOT_DEPLOYED"))
+        print()
+        continue
+    if code != 200:
+        print(f"  {RED}LOOKUP FAILED{RESET} HTTP {code}: {body[:200]}")
+        summary.append((name, f"HTTP_{code}"))
+        print()
+        continue
+
+    try:
+        form = json.loads(body)
+    except Exception:
+        print(f"  {RED}Invalid JSON from backend{RESET}")
+        summary.append((name, "BAD_BACKEND_RESPONSE"))
+        print()
+        continue
+
+    s_name    = form.get("name", "")
+    s_version = str(form.get("version", ""))
+    s_pub     = bool(form.get("published"))
+    s_retired = bool(form.get("retired"))
+
+    # Try to fetch the schema clob via the o3forms module to do a content diff
+    s_hash = "?"
+    code2, body2 = http_get(f"/ws/rest/v1/o3forms/{l_uuid}")
+    if code2 == 200:
+        try:
+            s_hash = canonical_hash(json.loads(body2))
+        except Exception:
+            s_hash = "unparseable"
+
+    print(f"  server: uuid={l_uuid} name={s_name!r} version={s_version} published={s_pub} retired={s_retired} sha={s_hash}")
+
+    if s_retired:
+        print(f"  {YELLOW}WARNING server form is retired{RESET}")
+
+    flags = []
+    if l_name != s_name:       flags.append("name differs")
+    if l_version != s_version: flags.append(f"version differs ({l_version} vs {s_version})")
+    if l_pub != s_pub:         flags.append(f"published differs ({l_pub} vs {s_pub})")
+    schema_diff = (s_hash not in ("?", "unparseable") and s_hash != l_hash)
+    if schema_diff:            flags.append("schema content differs")
+
+    if not flags:
+        print(f"  {GREEN}IN SYNC{RESET} (local file matches deployed form)")
+        summary.append((name, "IN_SYNC"))
+    else:
+        print(f"  {YELLOW}STALE / OUT OF SYNC{RESET}: " + "; ".join(flags))
+        if schema_diff:
+            print(f"  -> bump 'version' in {name} and rebuild the backend image, OR")
+            print(f"     edit the form via /openmrs/spa/form-builder and re-export.")
+        summary.append((name, "STALE"))
+    print()
+
+# overall
+counts = {}
+for _, s in summary:
+    counts[s] = counts.get(s, 0) + 1
+print("Summary:")
+for s, c in sorted(counts.items()):
+    color = GREEN if s == "IN_SYNC" else (RED if s in ("NOT_DEPLOYED","NO_LOCAL_UUID","PARSE_ERROR","BAD_BACKEND_RESPONSE") else YELLOW)
+    print(f"  {color}{s}{RESET}: {c}")
+
+PY
+}
+
 # Function to manage an individual service (start / stop / restart / rebuild)
 manage_service() {
     print_header "Manage Individual Container"
@@ -562,7 +724,8 @@ show_menu() {
     echo "11) Fastfetch (quick system overview)"
     echo "12) Manage individual container (start / stop / restart / rebuild)"
     echo "13) Probe form concepts against backend (diagnose save NPEs)"
-    echo "14) Exit"
+    echo "14) Check form versions (local file vs deployed form)"
+    echo "15) Exit"
     echo ""
 }
 
@@ -574,7 +737,7 @@ main() {
     
     while true; do
         show_menu
-        read -p "Enter your choice (1-14): " choice
+        read -p "Enter your choice (1-15): " choice
         echo ""
         
         case $choice in
@@ -618,11 +781,14 @@ main() {
                 probe_form_concepts
                 ;;
             14)
+                check_form_versions
+                ;;
+            15)
                 print_status "Goodbye!"
                 exit 0
                 ;;
             *)
-                print_error "Invalid choice. Please select a number between 1 and 14."
+                print_error "Invalid choice. Please select a number between 1 and 15."
                 ;;
         esac
         
