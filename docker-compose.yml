@@ -3,7 +3,7 @@ services:
     image: openmrs/openmrs-reference-application-3-gateway:${TAG:-qa}
     restart: "unless-stopped"
     volumes:
-    - ./nginx-extra.conf:/etc/nginx/conf.d/extra.conf:ro
+    - ./gateway/nginx-extra.conf:/etc/nginx/conf.d/extra.conf:ro
     depends_on:
       - frontend
       - backend
@@ -66,5 +66,4 @@ services:
 volumes:
   openmrs-data: ~
   db-data: ~
-  nginx-extra: ~
 
