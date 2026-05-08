@@ -8,11 +8,28 @@ image (see the project `Dockerfile`). It is loaded on startup by the
 
 ```
 configuration/
+├── concepts/
+│   └── malaria_concepts.csv      # Concepts referenced by forms (stub entries)
 ├── encountertypes/
 │   └── encountertypes.csv        # Encounter types referenced by forms
 └── forms/
     └── malaria_consultation_form_o3.json
 ```
+
+## Concepts
+
+`concepts/malaria_concepts.csv` declares the subset of CIEL concepts that the
+malaria form references but which are **not** present in the reference
+application's seed dataset. Each row carries a `CIEL:<id>` mapping so that if
+the full CIEL dictionary is later imported via the Open Concept Lab (OCL)
+module, the concept records will line up.
+
+Rows are ordered so that answer / leaf concepts appear before the parent
+question concepts that reference them. Initializer re-runs on every backend
+startup and is idempotent.
+
+If you plan to load full CIEL via OCL, you may eventually delete this file —
+but leaving it in place is safe.
 
 ## Bundled forms
 

@@ -1,0 +1,15 @@
+Uuid,Void/Retire,Fully specified name:en,Short name:en,Description:en,Datatype,Class,Answers,Same as concept mappings
+# ---- Answer / leaf concepts (must exist before the question concepts that reference them) ----
+152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Unable to drink or breastfeed,Cannot drink/breastfeed,Patient is unable to drink or breastfeed (IMCI danger sign),N/A,Finding,,CIEL:152761
+116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Plasmodium vivax,P. vivax,Malaria parasite species Plasmodium vivax,N/A,Diagnosis,,CIEL:116124
+116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Severe malaria,Severe malaria,Severe (complicated) malaria per WHO classification,N/A,Diagnosis,,CIEL:116126
+161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Artemether-Lumefantrine,AL,Artemether-Lumefantrine combination (ACT) for uncomplicated malaria,N/A,Drug,,CIEL:161350
+71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Artesunate,Artesunate,Artesunate (IV or parenteral) used for severe malaria,N/A,Drug,,CIEL:71100
+159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Discharged,Discharged,Patient discharged home after consultation,N/A,Misc,,CIEL:159492
+# ---- Question / grouping concepts ----
+162568AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Malaria danger signs,Danger signs,Danger signs observed during malaria consultation (multi-select),Coded,Finding,113054AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;143050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;122496AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;135595AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:162568
+160101AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Plasmodium species,Species,Plasmodium species identified on microscopy/RDT,Coded,Question,116125AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:160101
+160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Malaria classification,Classification,Final malaria classification (uncomplicated vs severe),Coded,Question,116128AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:160108
+1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Antimalarial medication prescribed,Antimalarial,Antimalarial medication selected for this consultation,Coded,Question,161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;160515AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:1282
+160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,LLIN bednet usage,LLIN usage,Whether the patient uses a Long-Lasting Insecticidal Net (MILDA),Coded,Question,1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:160428
+160430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Patient disposition,Disposition,Disposition at end of consultation (discharged / admitted / referred),Coded,Question,159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;160523AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;159AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:160430
