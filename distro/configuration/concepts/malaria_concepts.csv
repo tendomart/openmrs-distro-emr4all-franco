@@ -1,13 +1,32 @@
 Uuid,Void/Retire,Fully specified name:en,Short name:en,Description:en,Datatype,Class,Answers,Same as concept mappings
+5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Weight / Poids,Weight,Patient weight in kilograms,Numeric,Finding,,CIEL:5089
+5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Temperature / Température,Temperature,Patient temperature in degrees Celsius,Numeric,Finding,,CIEL:5088
+113054AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Convulsions / Convulsions,Convulsions,Convulsions observed during consultation,N/A,Finding,,CIEL:113054
+143050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Lethargy / Unconsciousness,Lethargy,Patient is lethargic or unconscious,N/A,Finding,,CIEL:143050
+122496AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Respiratory distress,Respiratory distress,Respiratory distress observed during consultation,N/A,Finding,,CIEL:122496
+135595AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Persistent vomiting,Persistent vomiting,Patient has persistent vomiting,N/A,Finding,,CIEL:135595
 152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Unable to drink or breastfeed,Cannot drink/breastfeed,Patient is unable to drink or breastfeed (IMCI danger sign),N/A,Finding,,CIEL:152761
-116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Plasmodium vivax,P. vivax,Malaria parasite species Plasmodium vivax,N/A,Diagnosis,,CIEL:116124
-116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Severe malaria,Severe malaria,Severe (complicated) malaria per WHO classification,N/A,Diagnosis,,CIEL:116126
-161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Artemether-Lumefantrine,AL,Artemether-Lumefantrine combination (ACT) for uncomplicated malaria,N/A,Drug,,CIEL:161350
-71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Artesunate,Artesunate,Artesunate (IV or parenteral) used for severe malaria,N/A,Drug,,CIEL:71100
-159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Discharged,Discharged,Patient discharged home after consultation,N/A,Misc,,CIEL:159492
 162568AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Malaria danger signs,Danger signs,Danger signs observed during malaria consultation (multi-select),Coded,Finding,113054AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;143050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;122496AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;135595AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:162568
+116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Plasmodium vivax,P. vivax,Malaria parasite species Plasmodium vivax,N/A,Diagnosis,,CIEL:116124
+116125AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Plasmodium falciparum,P. falciparum,Malaria parasite species Plasmodium falciparum,N/A,Diagnosis,,CIEL:116125
 160101AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Plasmodium species,Species,Plasmodium species identified on microscopy/RDT,Coded,Question,116125AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:160101
+116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Severe malaria,Severe malaria,Severe (complicated) malaria per WHO classification,N/A,Diagnosis,,CIEL:116126
+116128AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Uncomplicated malaria,Uncomplicated malaria,Uncomplicated malaria per WHO classification,N/A,Diagnosis,,CIEL:116128
 160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Malaria classification,Classification,Final malaria classification (uncomplicated vs severe),Coded,Question,116128AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:160108
+161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Artemether-Lumefantrine,AL,Artemether-Lumefantrine combination (ACT) for uncomplicated malaria,N/A,Drug,,CIEL:161350
+160515AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Artesunate-Amodiaquine,ASAQ,Artesunate-Amodiaquine combination therapy,N/A,Drug,,CIEL:160515
+71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Artesunate,Artesunate,Artesunate (IV or parenteral) used for severe malaria,N/A,Drug,,CIEL:71100
 1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Antimalarial medication prescribed,Antimalarial,Antimalarial medication selected for this consultation,Coded,Question,161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;160515AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:1282
+1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Yes,Yes,Affirmative / Yes response,Coded,Misc,,CIEL:1065
+1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,No,No,Negative / No response,Coded,Misc,,CIEL:1066
 160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,LLIN bednet usage,LLIN usage,Whether the patient uses a Long-Lasting Insecticidal Net (MILDA),Coded,Question,1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:160428
+159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Discharged,Discharged,Patient discharged home after consultation,N/A,Misc,,CIEL:159492
+160523AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Admitted,Admitted,Patient admitted to hospital,N/A,Misc,,CIEL:160523
+159AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Referred,Referred,Patient referred to another facility,N/A,Misc,,CIEL:159
 160430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Patient disposition,Disposition,Disposition at end of consultation (discharged / admitted / referred),Coded,Question,159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;160523AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;159AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:160430
+1643AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Rapid diagnostic test,Diagnostic test,Rapid diagnostic test performed for malaria,Coded,Question,1643AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;32AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:1643
+32AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Microscopy / Blood smear,Blood smear,Blood smear microscopy test performed,N/A,Diagnosis,,CIEL:32
+1138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Malaria test result,Test result,Result of the malaria diagnostic test,Coded,Question,703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CIEL:1138
+703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Positive,Positive,Positive malaria diagnostic test result,Coded,Misc,,CIEL:703
+664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Negative,Negative,Negative malaria diagnostic test result,Coded,Misc,,CIEL:664
+887AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,,Parasite density,Parasite density,Number of parasites per microliter of blood,Numeric,Finding,,CIEL:887
