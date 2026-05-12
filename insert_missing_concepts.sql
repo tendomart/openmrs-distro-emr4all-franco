@@ -7,9 +7,9 @@
 -- Finding class: 10, Diagnosis class: 10, Question class: 10, Drug class: 10, Misc class: 10
 
 -- Insert the 12 missing concepts
--- 1. Artemether-Lumefantrine (161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 1. Artemether-Lumefantrine (161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - N/A datatype
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4254, '161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4254, '161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 4, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -24,9 +24,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3001, 4254, 'Artemether-Lumefantrine combination (ACT) for uncomplicated malaria', 'en', 1, NOW(), '161350AAAAAAAAAAAAAAAAAAAAAAAAAAAAD')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 2. Malaria danger signs (162568AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 2. Malaria danger signs (162568AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - Coded datatype (has answers)
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4255, '162568AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4255, '162568AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 2, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -41,9 +41,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3002, 4255, 'Danger signs observed during malaria consultation (multi-select)', 'en', 1, NOW(), '162568AAAAAAAAAAAAAAAAAAAAAAAAAAAAD')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 3. Malaria classification (160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 3. Malaria classification (160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - Coded datatype (has answers)
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4256, '160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4256, '160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 2, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -58,9 +58,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3003, 4256, 'Final malaria classification (uncomplicated vs severe)', 'en', 1, NOW(), '160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAD')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 4. Unable to drink or breastfeed (152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 4. Unable to drink or breastfeed (152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - N/A datatype
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4257, '152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4257, '152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 4, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -75,9 +75,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3004, 4257, 'Patient is unable to drink or breastfeed (IMCI danger sign)', 'en', 1, NOW(), '152761AAAAAAAAAAAAAAAAAAAAAAAAAAAAD')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 5. Plasmodium species (160101AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 5. Plasmodium species (160101AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - Coded datatype (has answers)
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4258, '160101AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4258, '160101AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 2, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -92,9 +92,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3005, 4258, 'Plasmodium species identified on microscopy/RDT', 'en', 1, NOW(), '160101AAAAAAAAAAAAAAAAAAAAAAAAAAAAD')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 6. Artesunate (71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 6. Artesunate (71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - N/A datatype
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4259, '71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4259, '71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 4, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -105,9 +105,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3006, 4259, 'Artesunate (IV or parenteral) used for severe malaria', 'en', 1, NOW(), '71100AAAAAAAAAAAAAAAAAAAAAAAAAAAAC')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 7. Plasmodium vivax (116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 7. Plasmodium vivax (116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - N/A datatype
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4260, '116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4260, '116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 4, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -122,9 +122,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3007, 4260, 'Malaria parasite species Plasmodium vivax', 'en', 1, NOW(), '116124AAAAAAAAAAAAAAAAAAAAAAAAAAAAD')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 8. LLIN bednet usage (160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 8. LLIN bednet usage (160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - Coded datatype (has answers)
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4261, '160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4261, '160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 2, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -139,9 +139,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3008, 4261, 'Whether the patient uses a Long-Lasting Insecticidal Net (MILDA)', 'en', 1, NOW(), '160428AAAAAAAAAAAAAAAAAAAAAAAAAAAAD')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 9. Antimalarial medication prescribed (1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 9. Antimalarial medication prescribed (1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - Coded datatype (has answers)
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4262, '1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4262, '1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 2, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -156,9 +156,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3009, 4262, 'Antimalarial medication selected for this consultation', 'en', 1, NOW(), '1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAD')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 10. Discharged (159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 10. Discharged (159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - N/A datatype
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4263, '159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4263, '159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 4, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -169,9 +169,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3010, 4263, 'Patient discharged home after consultation', 'en', 1, NOW(), '159492AAAAAAAAAAAAAAAAAAAAAAAAAAAAC')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 11. Severe malaria (116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 11. Severe malaria (116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - N/A datatype
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4264, '116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4264, '116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 4, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
@@ -182,9 +182,9 @@ INSERT INTO concept_description (concept_description_id, concept_id, description
 VALUES (3011, 4264, 'Severe (complicated) malaria per WHO classification', 'en', 1, NOW(), '116126AAAAAAAAAAAAAAAAAAAAAAAAAAAAC')
 ON DUPLICATE KEY UPDATE description=description;
 
--- 12. Patient disposition (160430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+-- 12. Patient disposition (160430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) - Coded datatype (has answers)
 INSERT INTO concept (concept_id, uuid, retired, datatype_id, class_id, creator, date_created, changed_by, date_changed)
-VALUES (4265, '160430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 8, 10, 1, NOW(), 1, NOW())
+VALUES (4265, '160430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 0, 2, 10, 1, NOW(), 1, NOW())
 ON DUPLICATE KEY UPDATE retired=0;
 
 INSERT INTO concept_name (concept_name_id, concept_id, name, locale, concept_name_type, creator, date_created, uuid)
