@@ -166,6 +166,11 @@
                     "concept": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "label": "Negative",
                     "conceptMappings": [{ "type": "CIEL", "value": "664" }]
+                  },
+                  {
+                    "concept": "1213BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+                    "label": "Indeterminate",
+                    "conceptMappings": [{ "type": "CIEL", "value": "1213" }]
                   }
                 ]
               }
