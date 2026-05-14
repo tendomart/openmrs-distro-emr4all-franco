@@ -27,4 +27,4 @@ FROM concept c, concept_reference_term crt
 WHERE c.uuid = '1213BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB'
 AND crt.code = 'ZZ'
 AND crt.concept_source_id = (SELECT concept_source_id FROM concept_reference_source WHERE name = 'CIEL')
-ON DUPLICATE KEY UPDATE concept_id=concept_id;
+ON DUPLICATE KEY UPDATE concept_id=c.concept_id;
