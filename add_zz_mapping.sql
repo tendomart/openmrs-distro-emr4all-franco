@@ -9,7 +9,7 @@ SELECT
     (SELECT concept_source_id FROM concept_reference_source WHERE name = 'CIEL'),
     1,
     NOW(),
-    'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ'
+    'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ'
 WHERE NOT EXISTS (
     SELECT 1 FROM concept_reference_term WHERE code = 'ZZ'
     AND concept_source_id = (SELECT concept_source_id FROM concept_reference_source WHERE name = 'CIEL')
@@ -22,7 +22,7 @@ SELECT
     c.concept_id,
     1,
     NOW(),
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM'
+    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM'
 FROM concept c, concept_reference_term crt
 WHERE c.uuid = '1213BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB'
 AND crt.code = 'ZZ'
