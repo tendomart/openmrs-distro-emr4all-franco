@@ -4,9 +4,9 @@
 INSERT INTO concept_reference_map (concept_id, source_uuid, reference_code, concept_source_id, creator, date_created, uuid)
 SELECT 
     c.concept_id,
-    (SELECT uuid FROM concept_source WHERE name = 'CIEL'),
+    (SELECT uuid FROM concept_reference_source WHERE name = 'CIEL'),
     'ZZ',
-    (SELECT concept_source_id FROM concept_source WHERE name = 'CIEL'),
+    (SELECT concept_source_id FROM concept_reference_source WHERE name = 'CIEL'),
     1,
     NOW(),
     'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ'
