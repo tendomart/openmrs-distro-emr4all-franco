@@ -31,15 +31,15 @@
   }
   ,
   "@openmrs/esm-styleguide": {
-    "Brand color #1": "#012c3d ",
-    "Brand color #2": "#0085CA",
-    "Brand color #3": "#0085CA",
-    "implementationName": "CongoEMR"
+    "Brand color #1": "#257828",
+    "Brand color #2": "#063808",
+    "Brand color #3": "#035206",
+    "implementationName": "République de Kembara"
   },
   "@openmrs/esm-login-app": {
     "logo": {
       "src": "/openmrs/spa/logo.png",
-      "alt": "CongoEMR"
+      "alt": "KembaraEMR"
     }
   },
   "@openmrs/esm-primary-navigation-app": {
