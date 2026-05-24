@@ -121,10 +121,19 @@ fastfetch() {
 # Function to build and start containers
 build_and_start() {
     print_header "Building and Starting Containers"
+
+    # Check if SSL is enabled and use appropriate compose files
+    if [ -f ".ssl_enabled" ]; then
+        print_status "SSL is enabled. Using docker-compose.ssl.yml..."
+        DOCKER_COMPOSE_FILES="-f docker-compose.yml -f docker-compose.ssl.yml"
+    else
+        DOCKER_COMPOSE_FILES="-f docker-compose.yml"
+    fi
+
     print_status "Building all containers..."
-    $DOCKER_COMPOSE_CMD build --no-cache
+    $DOCKER_COMPOSE_CMD $DOCKER_COMPOSE_FILES build --no-cache
     print_status "Starting all containers..."
-    $DOCKER_COMPOSE_CMD up -d
+    $DOCKER_COMPOSE_CMD $DOCKER_COMPOSE_FILES up -d
     print_status "Containers are now running!"
     show_status
 }
@@ -136,14 +145,21 @@ rebuild_containers() {
     read -p "Are you sure? (y/N): " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
+        # Check if SSL is enabled
+        if [ -f ".ssl_enabled" ]; then
+            DOCKER_COMPOSE_FILES="-f docker-compose.yml -f docker-compose.ssl.yml"
+        else
+            DOCKER_COMPOSE_FILES="-f docker-compose.yml"
+        fi
+
         print_status "Stopping containers..."
-        $DOCKER_COMPOSE_CMD down
+        $DOCKER_COMPOSE_CMD $DOCKER_COMPOSE_FILES down
         print_status "Removing containers and images..."
-        $DOCKER_COMPOSE_CMD down --rmi all
+        $DOCKER_COMPOSE_CMD $DOCKER_COMPOSE_FILES down --rmi all
         print_status "Rebuilding containers..."
-        $DOCKER_COMPOSE_CMD build --no-cache
+        $DOCKER_COMPOSE_CMD $DOCKER_COMPOSE_FILES build --no-cache
         print_status "Starting containers..."
-        $DOCKER_COMPOSE_CMD up -d
+        $DOCKER_COMPOSE_CMD $DOCKER_COMPOSE_FILES up -d
         print_status "Containers rebuilt and started!"
         show_status
     else
@@ -158,8 +174,15 @@ delete_containers() {
     read -p "Are you sure? (y/N): " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
+        # Check if SSL is enabled
+        if [ -f ".ssl_enabled" ]; then
+            DOCKER_COMPOSE_FILES="-f docker-compose.yml -f docker-compose.ssl.yml"
+        else
+            DOCKER_COMPOSE_FILES="-f docker-compose.yml"
+        fi
+
         print_status "Stopping and removing containers..."
-        $DOCKER_COMPOSE_CMD down --volumes --remove-orphans
+        $DOCKER_COMPOSE_CMD $DOCKER_COMPOSE_FILES down --volumes --remove-orphans
         print_status "Containers deleted!"
         show_status
     else
@@ -392,6 +415,169 @@ PY
     fi
 
     rm -f "$TMP_UUIDS" "$TMP_MISSING"
+}
+
+# Function to toggle SSL mode
+toggle_ssl() {
+    print_header "SSL Configuration"
+
+    # Check if docker-compose.ssl.yml exists
+    if [ ! -f "docker-compose.ssl.yml" ]; then
+        print_error "docker-compose.ssl.yml not found. SSL configuration not available."
+        return 1
+    fi
+
+    # Check current SSL status
+    if [ -f ".ssl_enabled" ]; then
+        print_status "SSL is currently ENABLED"
+        echo ""
+        echo "Current configuration:"
+        echo "  - HTTPS port: 443"
+        echo "  - Certbot service: Active"
+        echo "  - Certificate mode: $([ -f .ssl_prod ] && echo 'Production (Let'\''s Encrypt)' || echo 'Development (Self-signed)')"
+        echo ""
+        read -p "Do you want to DISABLE SSL? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            print_status "Disabling SSL..."
+            rm -f .ssl_enabled .ssl_prod
+            print_status "SSL disabled. Containers must be restarted to apply changes."
+            print_status "Run option 1) Build and start all containers to restart."
+        else
+            print_status "SSL remains enabled."
+        fi
+    else
+        print_status "SSL is currently DISABLED"
+        echo ""
+        echo "SSL options:"
+        echo "1) Enable SSL with self-signed certificates (development/testing)"
+        echo "2) Enable SSL with Let's Encrypt (production - requires domain)"
+        echo "3) Cancel"
+        echo ""
+        read -p "Enter your choice (1-3): " ssl_choice
+
+        case $ssl_choice in
+            1)
+                print_status "Enabling SSL with self-signed certificates..."
+                enable_ssl_dev
+                ;;
+            2)
+                print_status "Enabling SSL with Let's Encrypt..."
+                enable_ssl_prod
+                ;;
+            3)
+                print_status "Cancelled."
+                return
+                ;;
+            *)
+                print_error "Invalid choice."
+                return
+                ;;
+        esac
+    fi
+}
+
+# Function to enable SSL in development mode (self-signed)
+enable_ssl_dev() {
+    print_header "Enable SSL (Development Mode)"
+
+    # Set environment variables for dev mode
+    export SSL_MODE="dev"
+    export CERT_WEB_DOMAINS="localhost,127.0.0.1"
+    export SSL_STAGING="false"
+
+    # Create SSL enabled marker
+    touch .ssl_enabled
+
+    print_status "SSL enabled in development mode!"
+    print_warning "Browsers will show security warnings for self-signed certificates."
+    print_status "Restart containers to apply changes."
+    print_status "Run: docker-compose -f docker-compose.yml -f docker-compose.ssl.yml up -d"
+}
+
+# Function to enable SSL in production mode (Let's Encrypt)
+enable_ssl_prod() {
+    print_header "Enable SSL (Production Mode)"
+
+    print_status "This requires a public domain name and valid DNS configuration."
+    echo ""
+    read -p "Enter your domain name (e.g., emr.example.com): " domain
+    read -p "Enter your email for Let's Encrypt notifications: " email
+
+    if [ -z "$domain" ] || [ -z "$email" ]; then
+        print_error "Domain and email are required for Let's Encrypt."
+        return 1
+    fi
+
+    # Set environment variables for prod mode
+    export SSL_MODE="prod"
+    export CERT_WEB_DOMAINS="$domain"
+    export CERT_CONTACT_EMAIL="$email"
+    export SSL_STAGING="false"
+
+    # Create markers
+    touch .ssl_enabled
+    touch .ssl_prod
+
+    print_status "SSL enabled in production mode!"
+    print_status "Domain: $domain"
+    print_status "Email: $email"
+    print_warning "Ensure your domain DNS points to this server before starting containers."
+    print_status "Restart containers to apply changes."
+    print_status "Run: docker-compose -f docker-compose.yml -f docker-compose.ssl.yml up -d"
+}
+
+# Function to set production mode
+set_production_mode() {
+    print_header "Production Mode Configuration"
+
+    if [ -f ".production" ]; then
+        print_status "Production mode is currently ENABLED"
+        echo ""
+        echo "Current production settings:"
+        echo "  - SSL: $([ -f .ssl_enabled ] && echo 'Enabled' || echo 'Disabled')"
+        echo "  - Environment: Production"
+        echo ""
+        read -p "Do you want to DISABLE production mode? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            print_status "Disabling production mode..."
+            rm -f .production
+            print_status "Production mode disabled."
+        else
+            print_status "Production mode remains enabled."
+        fi
+    else
+        print_status "Production mode is currently DISABLED"
+        echo ""
+        print_warning "Production mode enables:"
+        echo "  - SSL/TLS encryption (recommended)"
+        echo "  - Security headers"
+        echo "  - Stronger cipher suites"
+        echo "  - HSTS (HTTP Strict Transport Security)"
+        echo ""
+        read -p "Do you want to ENABLE production mode? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            print_status "Enabling production mode..."
+            touch .production
+
+            # Prompt for SSL
+            if [ ! -f ".ssl_enabled" ]; then
+                print_warning "SSL is not enabled. SSL is highly recommended for production."
+                read -p "Do you want to enable SSL now? (y/N): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    toggle_ssl
+                fi
+            fi
+
+            print_status "Production mode enabled!"
+            print_status "Restart containers to apply changes."
+        else
+            print_status "Production mode remains disabled."
+        fi
+    fi
 }
 
 # Function to compare every local O3 form JSON against what is actually
@@ -719,6 +905,9 @@ show_menu() {
     echo "Current container status:"
     $DOCKER_COMPOSE_CMD ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
     echo ""
+    echo "Mode: $([ -f .production ] && echo 'PRODUCTION' || echo 'DEVELOPMENT')"
+    echo "SSL: $([ -f .ssl_enabled ] && echo 'ENABLED' || echo 'DISABLED')"
+    echo ""
     echo "Please select an action:"
     echo "1) Build and start all containers"
     echo "2) Rebuild all containers (from scratch)"
@@ -734,7 +923,9 @@ show_menu() {
     echo "12) Manage individual container (start / stop / restart / rebuild)"
     echo "13) Probe form concepts against backend (diagnose save NPEs)"
     echo "14) Check form versions (local file vs deployed form)"
-    echo "15) Exit"
+    echo "15) Toggle SSL configuration (HTTP/HTTPS)"
+    echo "16) Set production mode"
+    echo "17) Exit"
     echo ""
 }
 
@@ -746,9 +937,9 @@ main() {
     
     while true; do
         show_menu
-        read -p "Enter your choice (1-15): " choice
+        read -p "Enter your choice (1-17): " choice
         echo ""
-        
+
         case $choice in
             1)
                 build_and_start
@@ -793,14 +984,20 @@ main() {
                 check_form_versions
                 ;;
             15)
+                toggle_ssl
+                ;;
+            16)
+                set_production_mode
+                ;;
+            17)
                 print_status "Goodbye!"
                 exit 0
                 ;;
             *)
-                print_error "Invalid choice. Please select a number between 1 and 15."
+                print_error "Invalid choice. Please select a number between 1 and 17."
                 ;;
         esac
-        
+
         echo ""
         read -p "Press Enter to continue..."
     done
