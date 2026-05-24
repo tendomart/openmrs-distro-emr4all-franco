@@ -485,12 +485,15 @@ enable_ssl_dev() {
     export SSL_MODE="dev"
     export CERT_WEB_DOMAINS="localhost,127.0.0.1"
     export SSL_STAGING="false"
+    export SSL_PORT="8443"
 
     # Create SSL enabled marker
     touch .ssl_enabled
 
     print_status "SSL enabled in development mode!"
     print_warning "Browsers will show security warnings for self-signed certificates."
+    print_status "HTTPS port: 8443 (port 443 is in use by Traefik)"
+    print_status "Access via: https://localhost:8443"
     print_status "Restart containers to apply changes."
     print_status "Run: docker-compose -f docker-compose.yml -f docker-compose.ssl.yml up -d"
 }
@@ -509,6 +512,22 @@ enable_ssl_prod() {
         return 1
     fi
 
+    # Check if port 443 is available
+    if sudo lsof -i :443 -sTCP:LISTEN -t >/dev/null 2>&1; then
+        print_warning "Port 443 is already in use (by Traefik or another service)."
+        read -p "Use alternative port 8443 instead? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            export SSL_PORT="8443"
+            print_status "Will use port 8443 for HTTPS."
+        else
+            print_error "Port 443 must be available for standard HTTPS. Please stop the conflicting service."
+            return 1
+        fi
+    else
+        export SSL_PORT="443"
+    fi
+
     # Set environment variables for prod mode
     export SSL_MODE="prod"
     export CERT_WEB_DOMAINS="$domain"
@@ -522,6 +541,12 @@ enable_ssl_prod() {
     print_status "SSL enabled in production mode!"
     print_status "Domain: $domain"
     print_status "Email: $email"
+    print_status "HTTPS port: $SSL_PORT"
+    if [ "$SSL_PORT" = "8443" ]; then
+        print_status "Access via: https://$domain:8443"
+    else
+        print_status "Access via: https://$domain"
+    fi
     print_warning "Ensure your domain DNS points to this server before starting containers."
     print_status "Restart containers to apply changes."
     print_status "Run: docker-compose -f docker-compose.yml -f docker-compose.ssl.yml up -d"
